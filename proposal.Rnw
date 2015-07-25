@@ -1,0 +1,116 @@
+\documentclass[11pt]{article}    
+%\usepackage[latin1]{inputenc}
+\usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{amsmath,amsthm,amssymb,bbm} %math stuff
+\usepackage{ctable}
+\usepackage{placeins} % FloatBarrier
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{float}    % for fig.pos='H'
+\usepackage{rotfloat} % for sidewaysfigure
+%\usepackage{subfig}   % for subfigure
+\usepackage{subcaption}  % an alternative package for sub figures
+\newcommand{\subfloat}[2][need a sub-caption]{\subcaptionbox{#1}{#2}}
+\usepackage{comment}
+\usepackage[round]{natbib}   % omit 'round' option if you prefer square brackets
+\bibliographystyle{plainnat}
+\usepackage{setspace} %Spacing
+\usepackage{graphicx,graphics}
+\usepackage{booktabs,tabularx}
+\usepackage{enumerate}
+\usepackage{makecell}
+\usepackage{xfrac}
+\usepackage{color, colortbl, xcolor}
+\usepackage{booktabs,dcolumn} % for use with texreg in R
+\usepackage[pagebackref=true,bookmarks]{hyperref}
+\hypersetup{
+    unicode=false,          
+    pdftoolbar=true,        
+    pdfmenubar=true,        
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={004-Figures},    % title
+    pdfauthor={SRB},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={SRB},   % creator of the document
+    pdfproducer={SRB}, % producer of the document
+    pdfkeywords={}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=blue,        % color of links to bibliography
+    filecolor=black,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+
+\begin{document}
+%\pagestyle{fancy}
+
+\title{Prerequisite Skill Structures in ASSISTments}
+\author{Michel Desmarais \and Sameer Bhatnagar}
+\date{\today}
+\maketitle
+
+
+<<setup, echo=FALSE,warning=FALSE,message=FALSE,cache=FALSE, results='hide'>>=
+options(width=60, digits=2)
+set.seed(45)
+opts_chunk$set(echo = FALSE, tidy = TRUE, cache = FALSE, warning = FALSE, message = FALSE)
+opts_template$set(
+    fig.large = list(fig.width = 7, fig.height = 5, fig.align = 'center', fig.pos = 'H'),
+    fig.small = list(fig.width = 6, fig.height = 4, fig.align = 'center', fig.pos = 'H'),
+    fig.full = list(fig.width = 8, fig.height = 6, fig.align = 'center', fig.pos = 'H')
+)
+opts_knit$set(eval.after = 'fig.cap') # for captions to be evaluated after R objects are available 
+knitr::read_chunk("packages.R")
+knitr::read_chunk("lib-poks.R")
+knitr::read_chunk("poks-skills-demo.R")
+@
+
+<<required-packages,echo=FALSE,warning=FALSE,message=FALSE, eval=TRUE, results='hide'>>=
+@
+
+\begin{abstract}
+At the 2015 Artificial Intelligence in Education conference, Seth Adjei and Neil Heffernan presented their work on scrutinizing expert-defined prerequisite skill graphs. Using randomized controlled trials in PLACEments, the computer-adaptive-testing feature in the ASSISTments learning environment, they were able to identify some prerequisite skill arcs that were not supported by data.\\
+This proposal outlines two alternative techniques that could be used to achieve the goal. We will start with a basic introduction to Partial Order Knowledge Structures (POKS), then try to mathematically formalize what a prerequisite skill might mean in this framework. The first proposed technique will be graph based, while the second will be built on interpreting probabilities during POKS structural learning.
+\end{abstract}
+
+\section{POKS}
+Partial Order Knowledge Structures (POKS) determine which items in a test are prerequisite to others. POKS are derived from the theory of Knowledge Spaces, where such prerequisite relationships are written as $A \to B $, which means if a student got item A correct, they likely will get item B also correct; said differently, item B is a prerequisite of item A.
+
+\subsection{Working Example}
+Let us look at a classical dataset from Tatsuoka, which is well studied in de la Torre. 
+<<data>>=
+@
+
+If we run the POKS code on this data, we get the following adjacency matrix.\\
+<<poks, results = 'asis'>>=
+@
+This structure can be visualized as follows:\\
+<<poks-graph, opts.label='fig.large'>>=
+@
+
+What stands out is item three, which has no prerequisites (no edges leaving node 3). Let us use this as a place to work out some numbers to demonstrate how the POKS structure is induced. We see that mastery of item 2 implies mastery of item 3 from the table and the graph. Let us check the contingency table for these two items.\\
+
+<<poks-worked-example1>>=
+@
+Now we can calculate $P(item2|item3)$ which should be greater than some threshold, as should $P(\neg item3|\neg item2)$.
+We must also ensure that the distributions over the two items are actually interacting with one another using a chi-square test.\\
+<<poks-worked-example2>>=
+@
+
+\section{Prerequisite Skills}
+It is important to recognize that to go from item-item structures, to skill-skill structure, we need an item-skill mapping. This has been coined the Q-matrix, where each item may require one or more skills. Here is an example of a expert defined q-matrix from our dataset:\\
+
+<<qmatrix, results = 'asis'>>=
+@
+
+
+\section{Deriving Prequisite skills - proposal 1}
+
+\section{Deriving Prequisite skills - proposal 2}
+if an item is succeeded, then all the skills involved should be considered succeeded.  If it is failed, then we need to determine how confident we are that skills involved are not mastered. And with the accumulated numbers, we simply build the POKS structure over skills!
+
+
+\end{document}

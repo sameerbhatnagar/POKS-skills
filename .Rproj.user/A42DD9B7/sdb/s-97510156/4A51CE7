@@ -1,0 +1,17 @@
+{
+    "contents" : "##----required-packages----\n\ngetPckg <- function(pckg) install.packages(pckg, repos = \"http://cran.r-project.org\")\n\npckg = try(require(knitr))\nif(!pckg) {\n  cat(\"Installing 'knitr' from CRAN\\n\")\n  getPckg(\"knitr\")\n  require(knitr)\n}\n\npckg = try(require(magrittr))\nif(!pckg) {\n  cat(\"Installing 'magrittr' from CRAN\\n\")\n  getPckg(\"magrittr\")\n  require(magrittr)\n}\n\npckg = try(require(dplyr))\nif(!pckg) {\n  cat(\"Installing 'dplyr' from CRAN\\n\")\n  getPckg(\"dplyr\")\n  require(dplyr)\n}\n\n\npckg = try(require(stats))\nif(!pckg) {\n  cat(\"Installing 'stats' from CRAN\\n\")\n  getPckg(\"stats\")\n  require(stats)\n}\n\npckg = try(require(ggplot2))\nif(!pckg) {\n  cat(\"Installing 'ggplot2' from CRAN\\n\")\n  getPckg(\"ggplot2\")\n  require(ggplot2)\n}\n\npckg = try(require(xtable))\nif(!pckg) {\n  cat(\"Installing 'xtable' from CRAN\\n\")\n  getPckg(\"xtable\")\n  require(xtable)\n}\n\npckg = try(require(texreg))\nif(!pckg) {\n  cat(\"Installing 'texreg' from CRAN\\n\")\n  getPckg(\"texreg\")\n  require(texreg)\n}\n\npckg = try(require(CDM))\nif(!pckg) {\n  cat(\"Installing 'CDM' from CRAN\\n\")\n  getPckg(\"CDM\")\n  require(CDM)\n}\n\npckg = try(require(sna))\nif(!pckg) {\n  cat(\"Installing 'sna' from CRAN\\n\")\n  getPckg(\"sna\")\n  require(sna)\n}\n\npckg = try(require(igraph))\nif(!pckg) {\n  cat(\"Installing 'igraph' from CRAN\\n\")\n  getPckg(\"igraph\")\n  require(igraph)\n}",
+    "created" : 1437791634856.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2826658368",
+    "id" : "4A51CE7",
+    "lastKnownWriteTime" : 1437794741,
+    "path" : "~/POKS-skills/packages.R",
+    "project_path" : "packages.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

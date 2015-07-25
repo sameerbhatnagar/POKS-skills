@@ -1,0 +1,18 @@
+{
+    "contents" : "\n#----data----\nfrac.data <- data.fraction2\nstr(frac.data$data)\n\n#----poks----\nsource('lib-poks.R')\nks <- ks.init(as.matrix(frac.data$data), p.min=0.8)\nks.table <- xtable(ks$m)\ndigits(ks.table) <- 0\nprint(ks.table,floating=FALSE)\n\n#----poks-graph----\nvnames<-seq(1, nrow(ks$m) ,1)\ngplot(ks$m, label = vnames, label.pos = 5)\n\n#----poks-worked-example1----\nitem2<-frac.data$data$H02\nitem3<-frac.data$data$H03\ntable(item2,item3)\n\n# cont.table <- xtable(table(item2,item3), digits = 0)\n# #digits(cont.table) <-0 \n# print(cont.table,floating=FALSE)\n\n#----poks-worked-example2----\nchisq.test(item2,item3)\n\n#----qmatrix----\nfrac.data$q.matrix1 %>% xtable(digits = 0) %>% print\n\n\n\n",
+    "created" : 1437600228267.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1940709415",
+    "id" : "AE0FAFDA",
+    "lastKnownWriteTime" : 1437796909,
+    "path" : "~/POKS-skills/poks-skills-demo.R",
+    "project_path" : "poks-skills-demo.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
