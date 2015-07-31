@@ -1,33 +1,46 @@
-
+rm(list = ls())
+source('packages.R')
 #----data----
-frac.data <- data.fraction2
-str(frac.data$data)
+fraction <- data.fraction1
+head(fraction$data)
+tail(fraction$data)
 
 #----poks----
-source('lib-poks.R')
-ks <- ks.init(as.matrix(frac.data$data), p.min=0.8)
-ks.table <- xtable(ks$m)
-digits(ks.table) <- 0
-print(ks.table,floating=FALSE)
+source('lib-poks-3.R')
+ks <- ks.init(as.matrix(fraction$data), p.min=0.8)
+ks$m
 
 #----poks-graph----
 vnames<-seq(1, nrow(ks$m) ,1)
 gplot(ks$m, label = vnames, label.pos = 5)
 
-#----poks-worked-example1----
-item2<-frac.data$data$H02
-item3<-frac.data$data$H03
-table(item2,item3)
+#----poks-worked-ftable----
+item5<-fraction$data$T05
+item4<-fraction$data$T04
+table(item4,item5)
 
-# cont.table <- xtable(table(item2,item3), digits = 0)
-# #digits(cont.table) <-0 
-# print(cont.table,floating=FALSE)
 
-#----poks-worked-example2----
-chisq.test(item2,item3)
+#----poks-worked-chisquare----
+chisq.test(item4,item5)
 
 #----qmatrix----
-frac.data$q.matrix1 %>% xtable(digits = 0) %>% print
+fraction$q.matrix
+
+#----skill-mastery-matrix----
+head(as.matrix(fraction$data) %*% as.matrix(fraction$q.matrix))
+tail(as.matrix(fraction$data) %*% as.matrix(fraction$q.matrix))
+
+#----skill-mastery-matrix-norm----
+skill.mast.data0 <- ((as.matrix(fraction$data) %*% (as.matrix(fraction$q.matrix))))/((matrix(1, nrow(fraction$data), ncol(fraction$data)) %*% fraction$q.matrix))
+head(skill.mast.data0) %>% round(2)
+tail(skill.mast.data0) %>% round(2)
+
+#----poks-skills----
+skill.mast.data.round <- skill.mast.data0 %>% round
+ks.skills <- ks.init(as.matrix(skill.mast.data.round), p.min=0.99)
+ks.skills$m
 
 
-
+#----poks-skills-graph----
+vnames<-seq(1, nrow(ks.skills$m) ,1)
+gplot(ks.skills$m, label = vnames, label.pos = 5)

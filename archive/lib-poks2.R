@@ -599,13 +599,13 @@ simulation.cross <- function(raw.train, raw.test, state=F, p.min=0.5, alpha.c=.2
 # Optimized version of 2010.02.24
 #############################################################################
 # Adjacency matrix m is directed row->col
-ks.init.o <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
+ks.init <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   s.less.na <- colSums(!is.na(raw))
   raw.sum <- colSums(raw, na.rm=T)
   p <- (raw.sum+1)/(s.less.na+2)
   odds <- p/(1-p)
   ans.cp.t <- replace(raw, is.na(raw), 0) # answers for crossprod computations of success
-  ans.cp.f <- round(replace(!raw, is.na(raw), 0)) # answers for crossprod computations of failures
+  ans.cp.f <- round(replace(1-raw, is.na(raw), 0)) # answers for crossprod computations of failures
   ft <- array(c(crossprod(ans.cp.t,ans.cp.t), # frequency table of TT, TF, FT, and FF
                                         # f11, f21, f12, f22
                  crossprod(ans.cp.t,ans.cp.f),
@@ -632,7 +632,7 @@ ks.init.o <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   # apply binom.test to slots that passed the interaction test
   p.b1a1.v <- apply(cbind(b1a1[m.rel], a1[m.rel]),
                     1,              # by row
-                    function(n.k) pbinom(n.k[1], n.k[2], p.min))
+                    function(n.k) pbinom(round(n.k[1]), round(n.k[2]), p.min))
   # p.b1a1.v is a vector and now we need a matrix 
   p.b1a1 <- matrix(F, ncol(m.rel), ncol(m.rel))
   # Why is this '>' here and below??  Should be corrected by inverting the ratio.
@@ -643,7 +643,7 @@ ks.init.o <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   a0b0 <- (ft[,,4])-1                 # substract Laplace correction
   p.a0b0.v <- apply(cbind(a0b0[m.rel], a0[m.rel]),
                     1,              # by row
-                    function(n.k) pbinom(n.k[1], n.k[2], p.min))
+                    function(n.k) pbinom(round(n.k[1]), round(n.k[2]), p.min))
   # p.a0b0.v is a vector and now we need a matrix 
   p.a0b0 <- matrix(F, ncol(m.rel), ncol(m.rel))
   p.a0b0[m.rel] <- p.a0b0.v  > alpha.p               # matrix is re-indexed by m
@@ -664,7 +664,6 @@ ks.init.o <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   list(m=m.rel, p=p, odds=odds, condp.t=condp.t, condp.f=condp.f, or=or, state=state,
        alpha.c=alpha.c, alpha.p=alpha.p, odds.t=odds.t, odds.f=odds.f, or=or, p.min=p.min, nlinks=nlinks, log.nlinks=log.nlinks, nl.for=rowSums(m.rel, na.rm=T), nl.bak=colSums(m.rel, na.rm=T))
 }
-
 # Optimized version used in place of original (currently in poks2-lib.R)
 ks.init <- ks.init.o
 

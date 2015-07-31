@@ -1,0 +1,155 @@
+\documentclass[11pt]{article}    
+%\usepackage[latin1]{inputenc}
+\usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{amsmath,amsthm,amssymb,bbm} %math stuff
+\usepackage{ctable}
+\usepackage{placeins} % FloatBarrier
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{float}    % for fig.pos='H'
+\usepackage{rotfloat} % for sidewaysfigure
+%\usepackage{subfig}   % for subfigure
+\usepackage{subcaption}  % an alternative package for sub figures
+\newcommand{\subfloat}[2][need a sub-caption]{\subcaptionbox{#1}{#2}}
+\usepackage{comment}
+\usepackage[round]{natbib}   % omit 'round' option if you prefer square brackets
+\bibliographystyle{plainnat}
+\usepackage{setspace} %Spacing
+\usepackage{graphicx,graphics}
+\usepackage{booktabs,tabularx}
+\usepackage{enumerate}
+\usepackage{makecell}
+\usepackage{xfrac}
+\usepackage{color, colortbl, xcolor}
+\usepackage{booktabs,dcolumn} % for use with texreg in R
+\usepackage[pagebackref=true,bookmarks]{hyperref}
+\hypersetup{
+    unicode=false,          
+    pdftoolbar=true,        
+    pdfmenubar=true,        
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdftitle={004-Figures},    % title
+    pdfauthor={SRB},     % author
+    pdfsubject={Subject},   % subject of the document
+    pdfcreator={SRB},   % creator of the document
+    pdfproducer={SRB}, % producer of the document
+    pdfkeywords={}, % list of keywords
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=blue,        % color of links to bibliography
+    filecolor=black,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+
+
+\begin{document}
+%\pagestyle{fancy}
+
+\title{Prerequisite Skill Structures in ASSISTments}
+\author{Michel Desmarais \and Sameer Bhatnagar}
+\date{\today}
+\maketitle
+
+
+<<setup, echo=FALSE,warning=FALSE,message=FALSE,cache=FALSE, results='hide'>>=
+options(width=60, digits=2)
+set.seed(45)
+opts_chunk$set(echo = FALSE, tidy = TRUE, cache = FALSE, warning = FALSE, message = FALSE)
+opts_template$set(
+    fig.large = list(fig.width = 7, fig.height = 5, fig.align = 'center', fig.pos = 'H'),
+    fig.small = list(fig.width = 6, fig.height = 4, fig.align = 'center', fig.pos = 'H'),
+    fig.full = list(fig.width = 8, fig.height = 6, fig.align = 'center', fig.pos = 'H')
+)
+opts_knit$set(eval.after = 'fig.cap') # for captions to be evaluated after R objects are available 
+knitr::read_chunk("packages.R")
+knitr::read_chunk("lib-poks.R")
+knitr::read_chunk("poks-skills-demo.R")
+@
+
+<<required-packages,echo=FALSE,warning=FALSE,message=FALSE, eval=TRUE, results='hide'>>=
+@
+
+\begin{abstract}
+At the 2015 Artificial Intelligence in Education conference, Seth Adjei and Neil Heffernan presented their work on scrutinizing expert-defined prerequisite skill graphs. Using randomized controlled trials in PLACEments, the computer-adaptive-testing feature in the ASSISTments learning environment, they were able to identify some prerequisite skill arcs that were not supported by data.\\
+This proposal outlines a technique that could be used to achieve the goal. We will start with a basic introduction to Partial Order Knowledge Structures (POKS), then try to mathematically formalize what a prerequisite skill might mean in this framework. We will then show a basic example as "proof of concept".
+\end{abstract}
+
+\section{POKS}
+Partial Order Knowledge Structures (POKS) determine which items in a test are prerequisite to others. POKS are derived from the theory of Knowledge Spaces, where such prerequisite relationships are written as $A \to B $, which means if a student got item A correct, they likely will get item B also correct; said differently, item B is a prerequisite of item A.
+
+\subsection{Working Example}
+Let us look at a classical dataset from Tatsuoka, which is well studied in de la Torre 2009. 
+\subsubsection{POKS Network Induction}
+Here is the raw test data, where each row represents a student, and each column is their success/failure on one of the 15 items of a test on subtraction of fractions.
+<<data>>=
+@
+
+If we run the POKS code on this data, we get the following adjacency matrix.\\
+<<poks, echo = TRUE results = 'asis'>>=
+@
+This structure can be visualized as follows:\\
+<<poks-graph, opts.label='fig.large'>>=
+@
+
+What stands out is item five, which has no prerequisites (no edges leaving node 5). Let us use this as a place to work out some numbers to demonstrate how the POKS structure is induced. We see that mastery of item 4 implies mastery of item 5 from the table and the graph. Let us check the contingency table for these two items.\\
+
+<<poks-worked-ftable, echo = TRUE>>=
+@
+Now we can calculate $P(item_5|item_4)$ which should be greater than some threshold, as should $P(\neg item_4|\neg item_5)$ (threshold default is 0.5). 
+
+We must also ensure that the distributions over the two items are actually interacting with one another using a chi-square test.\\
+<<poks-worked-chisqare>>=
+@
+
+This is repeated pairwise for all the items until a item-item structure is built, with directed edges indicating prerequisite relations.
+
+\section{Prerequisite Skills}
+It is important to recognize that to go from item-item structures, to skill-skill structure, we need an item-skill mapping. This has been coined the Q-matrix, where each item may require one or more skills. Here is the expert-defined q-matrix from our dataset:\\
+
+<<qmatrix, results = 'asis'>>=
+@
+The five skills (columns) are
+\begin{description}
+	\item[QT1] performing basic fraction-subtraction operation
+	\item[QT2] simplifying/reducing
+	\item[QT3] separating whole number from fraction
+	\item[QT4] borrowing one from whole number to fraction
+	\item[QT5] converting whole
+\end{description} 
+
+The two proposals below will try to derive the prerequisite graph of these skills. Each method takes a different approach to mathematically formalizing how a skill-prerequisite is modeled. 
+
+\subsection{Deriving Prerequisite skills - proposal}
+Multiplication of the student-response matrix, with the Q-matrix, gives what is called the skill-mastery matrix, wherein we can see which students have mastered which skills.
+<<skill-mastery-matrix, echo = TRUE>>=
+@
+This is a projection of the student test data onto the skills: the higher the value for a student, the greater our confidence that they mastered that skill. This can be normalized by the maximum possible score the student could have had for any particular skill, which gives a skill-mastery-probability matrix:
+
+<<skill-mastery-matrix-norm, echo = TRUE>>=
+@
+
+Now if we consider each skill as an item, and round the probabilities from the previous matrix, we get something that looks a lot like another item-response matrix (just like the raw test data we started with).
+
+<<skill-mastery-matrix-round, echo = TRUE>>=
+@ 
+Every probability that was above 0.5 is rounded to 1 (the student mastered that skill). Otherwise, the student gets a 0 for that skill.\\
+We can now run the same POKS code as before, but on this new skill mastery matrix: the difference is that now instead of determining which \textit{items} are prerequisites of each other, we will get relationships describing mastery of which \textit{skills} imply other \textit{skills}.
+
+<<poks-skills, echo = TRUE>>=
+@
+
+Once again, this can be visualized as follows (remembering that each node now represents a skill)
+
+<<poks-skills-graph>>=
+@ 
+
+The threshold probability was raised to 0.99 for this simulation. Comparing this graph to the original list of skills, we believe there is sufficient face-value to this approach to try further validation (skill QT5 - "converting whole" is very different from the other skills, and skill QT1 - "performing basic fraction-subtraction operation", is prerequisite to all the others).
+ 
+\section{Validation}
+Once a prerequisite skill structure is determined, it can be validated by seeing if running a simulation of a computer adaptive test, knowledge of the skill structure would improve predictions of performance over POKS alone.
+
+\textbf{need code chunks and explanations of  simulation?}
+
+\end{document}
