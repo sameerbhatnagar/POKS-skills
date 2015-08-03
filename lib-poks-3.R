@@ -1,6 +1,8 @@
 #############################################################################
 # Optimized version of 2010.02.24
 # 2015.07.28 change: !raw to 1-raw in "ans.cp.f <- round(replace(!raw, is.na(raw), 0))"
+
+# Author: Michel Desmarais
 #############################################################################
 
 # Adjacency matrix m is directed row->col
