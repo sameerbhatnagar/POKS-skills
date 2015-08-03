@@ -39,7 +39,7 @@ ks.init <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   # apply binom.test to slots that passed the interaction test
   p.b1a1.v <- apply(cbind(b1a1[m.rel], a1[m.rel]),
                     1,              # by row
-                    function(n.k) pbinom(n.k[1], n.k[2], p.min))
+                    function(n.k) pbinom(round(n.k[1]), round(n.k[2]), p.min))
   # p.b1a1.v is a vector and now we need a matrix 
   p.b1a1 <- matrix(F, ncol(m.rel), ncol(m.rel))
   # Why is this '>' here and below??  Should be corrected by inverting the ratio.
@@ -50,7 +50,7 @@ ks.init <- function(raw, alpha.c=.25, alpha.p=.25, p.min=.5) {
   a0b0 <- (ft[,,4])-1                 # substract Laplace correction
   p.a0b0.v <- apply(cbind(a0b0[m.rel], a0[m.rel]),
                     1,              # by row
-                    function(n.k) pbinom(n.k[1], n.k[2], p.min))
+                    function(n.k) pbinom(round(n.k[1]), round(n.k[2]), p.min))
   # p.a0b0.v is a vector and now we need a matrix 
   p.a0b0 <- matrix(F, ncol(m.rel), ncol(m.rel))
   p.a0b0[m.rel] <- p.a0b0.v  > alpha.p               # matrix is re-indexed by m
