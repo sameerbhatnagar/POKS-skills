@@ -121,23 +121,19 @@ The five skills (columns) are
 	\item[QT5] converting whole
 \end{description} 
 
-The two proposals below will try to derive the prerequisite graph of these skills. Each method takes a different approach to mathematically formalizing how a skill-prerequisite is modeled. 
+The proposal below will try to derive the prerequisite graph of these skills, and answer the question: which skills should be learned before the others?
 
 \subsection{Deriving Prerequisite skills - proposal}
-Multiplication of the student-response matrix, with the Q-matrix, gives what is called the skill-mastery matrix, wherein we can see which students have mastered which skills.
+Multiplication of the student-response matrix, with the Q-matrix, gives what is called the skill-mastery matrix, wherein we can see which students have mastered which skills. 
+<<skill-mastery-success-fail, echo=TRUE>>=
+@
+These two lines of code separate out the calculation of which students succeedded in acquiring the skill, and which students failed in doing so. (This helps deal with missing values, as there might be some students who didn't get tested on a particular skill).
+
+This is a projection of the student test data onto the skills: the higher the value for a student, the greater our confidence that they mastered that skill. This can be normalized by the maximum possible score the student could have had for any particular skill, which gives a skill-mastery-probability matrix:
 <<skill-mastery-matrix, echo = TRUE>>=
 @
-This is a projection of the student test data onto the skills: the higher the value for a student, the greater our confidence that they mastered that skill. This can be normalized by the maximum possible score the student could have had for any particular skill, which gives a skill-mastery-probability matrix:
 
-<<skill-mastery-matrix-norm, echo = TRUE>>=
-@
-
-Now if we consider each skill as an item, and round the probabilities from the previous matrix, we get something that looks a lot like another item-response matrix (just like the raw test data we started with).
-
-<<skill-mastery-matrix-round, echo = TRUE>>=
-@ 
-Every probability that was above 0.5 is rounded to 1 (the student mastered that skill). Otherwise, the student gets a 0 for that skill.\\
-We can now run the same POKS code as before, but on this new skill mastery matrix: the difference is that now instead of determining which \textit{items} are prerequisites of each other, we will get relationships describing mastery of which \textit{skills} imply other \textit{skills}.
+Now if we consider each skill as an item, we get something that looks a lot like another item-response matrix (just like the raw test data we started with). We can now run the same POKS code as before, but on this new skill mastery matrix: the difference is that now, instead of determining which \textit{items} are prerequisites of each other, we will get relationships describing mastery of which \textit{skills} imply other \textit{skills}.
 
 <<poks-skills, echo = TRUE>>=
 @
@@ -147,10 +143,10 @@ Once again, this is an adjacency matrix, where a 1 represents that the item of t
 <<poks-skills-graph>>=
 @ 
 
-The threshold probability pmin was raised to 0.99 in deriving this skill graph. Comparing this graph to the original list of skills, we believe there is sufficient face-value to this approach to try further validation (skill QT5 - "converting whole" is very different from the other skills, and skill QT1 - "performing basic fraction-subtraction operation", is prerequisite to all the others).
+The threshold probability pmin was raised to 0.9 in deriving this skill graph. Comparing this graph to the original list of skills, we believe there is sufficient face-value to this approach to try further validation (skill QT2 - "simplifying/reducing" is seperate not related to any of the others: one could argue that this skill has less to do with fractions, and more to do with really knowing your multiplication tables).
  
 \section{Validation}
-Once a prerequisite skill structure is determined, it can be validated by seeing if running a simulation of a computer adaptive test, knowledge of the skill structure would improve predictions of performance over POKS alone. \\\\\\
-\textbf{need code chunks and explanations of  simulation?}
+Once a prerequisite skill structure is determined, it can be validated by seeing if running a simulation of a computer adaptive test, knowledge of the skill structure would improve predictions of performance over POKS alone. This would require a slightly modified model. Another approach would be to generate synthetic data and see if this method could recover the prequisite skill structure that generated the data.
+
 
 \end{document}

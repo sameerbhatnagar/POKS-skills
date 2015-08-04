@@ -26,20 +26,24 @@ chisq.test(item4,item5)
 #----qmatrix----
 fraction$q.matrix
 
-#----skill-mastery-matrix----
-head(as.matrix(fraction$data) %*% as.matrix(fraction$q.matrix))
-tail(as.matrix(fraction$data) %*% as.matrix(fraction$q.matrix))
+#----replace-missing-values-with-zeros----
+fraction$data[is.na(fraction$data)] <-0
+fraction$data <- as.matrix(fraction$data)
 
-#----skill-mastery-matrix-norm----
-skill.mast.data0 <- ((as.matrix(fraction$data) %*% (as.matrix(fraction$q.matrix))))/((matrix(1, nrow(fraction$data), ncol(fraction$data)) %*% fraction$q.matrix))
-head(skill.mast.data0) %>% round(2)
-tail(skill.mast.data0) %>% round(2)
+#----skill-mastery-success-fail----
+skill.succ <- as.matrix(fraction$data) %*% as.matrix(fraction$q.matrix)
+skill.fail <- as.matrix(1-fraction$data) %*% as.matrix(fraction$q.matrix)
+
+#----skill-mastery-matrix----
+skill.mast.data <- skill.succ/(skill.succ+skill.fail)
+
+head(skill.mast.data)
+tail(skill.mast.data)
+
 
 #----poks-skills----
-skill.mast.data.round <- skill.mast.data0 %>% round
-ks.skills <- ks.init(as.matrix(skill.mast.data.round), p.min=0.99)
+ks.skills <- ks.init(as.matrix(skill.mast.data), p.min=0.9)
 ks.skills$m
-
 
 #----poks-skills-graph----
 vnames<-seq(1, nrow(ks.skills$m) ,1)
