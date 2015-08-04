@@ -17,6 +17,7 @@ figure/
 *_cache
 *_files
 *.md
+!README.md
 *.vrb
 *.nav
 *.blg
